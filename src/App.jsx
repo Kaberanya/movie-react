@@ -1,9 +1,25 @@
+import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import MovieSection from './components/MovieSection'
-import { trending, mayLike } from './data/movies'
+
+const API_URL = 'https://api.themoviedb.org/3'
+const API_KEY = import.meta.env.VITE_TMDB_KEY
 
 function App() {
+  const [trending, setTrending] = useState([])
+  const [popular, setPopular] = useState([])
+
+  useEffect(() => {
+    fetch(`${API_URL}/trending/movie/week?api_key=${API_KEY}`)
+      .then((response) => response.json())
+      .then((data) => setTrending(data.results || []))
+
+    fetch(`${API_URL}/movie/popular?api_key=${API_KEY}`)
+      .then((response) => response.json())
+      .then((data) => setPopular(data.results || []))
+  }, [])
+
   return (
     <>
       <div
@@ -13,7 +29,7 @@ function App() {
       <Header />
       <Hero />
       <MovieSection heading="🔥 Trending" movies={trending} />
-      <MovieSection heading="YOU MAY LIKE THIS" movies={mayLike} />
+      <MovieSection heading="YOU MAY LIKE THIS" movies={popular} />
     </>
   )
 }
